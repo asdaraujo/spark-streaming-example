@@ -1,0 +1,33 @@
+# Spark Streaming Example for Edge2AI Workshop
+
+This project creates a simple Spark Streaming example for the link:https://github.com/asdaraujo/edge2ai-workshop[Edge2AI Workshop].
+
+## Building
+
+[source,shell]
+----
+git clone <this repo URL>
+cd spark-streaming-example
+mvn clean package
+
+wget http://central.maven.org/maven2/org/apache/kudu/kudu-spark2_2.11/1.9.0/kudu-spark2_2.11-1.9.0.jar
+wget https://raw.githubusercontent.com/swordsmanliu/SparkStreamingHbase/master/lib/spark-core_2.11-1.5.2.logging.jar
+----
+
+## Running
+
+[source,shell]
+----
+ACCESS_KEY=<set with you CDSW Model Access Key>
+PUBLIC_IP=$(curl ifconfig.me)
+
+TARGET_JAR=./target/spark-streaming-example-1.0-SNAPSHOT-jar-with-dependencies.jar
+
+spark-submit \
+  --master local[2] \
+  --jars kudu-spark2_2.11-1.9.0.jar,spark-core_2.11-1.5.2.logging.jar \
+  --packages org.apache.spark:spark-streaming-kafka_2.11:1.6.3 \
+  --class com.cloudera.workshop.SparkStreamingIoT \
+  $TARGET_JAR \
+  $ACCESS_KEY $PUBLIC_IP 2>&1 | tee run.log
+----
